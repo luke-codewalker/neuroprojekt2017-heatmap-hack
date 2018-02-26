@@ -116,8 +116,8 @@
                     for (let i = 0; i < points.length; i++) {
                         const point = points[i];
 
-                        let size = Math.floor(canvas.width / 20) - i * Math.floor(canvas.width / 100);
-                        if (size <= 10) size = 10;
+                        let size = Math.floor(canvas.width / 20) - i * Math.floor(canvas.width / 125);
+                        if (size <= 20) size = 20;
 
                         ctx.beginPath();
                         ctx.fillStyle = 'rgba(255,200,0,0.75)';
