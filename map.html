@@ -28,7 +28,19 @@
     }
 
     .error-msg p {
-        background-color: rgba(255, 0, 0, 0.5)
+        background-color: rgba(255, 0, 0, 0.5);
+    }
+
+    .success-msg {
+        display: none;
+    }
+
+    .success-msg p {
+        background-color: rgba(0, 255, 0, 0.5);
+    }
+
+    .shown {
+        display: block;
     }
 </style>
 
@@ -50,6 +62,9 @@
 
 <!-- Heatmap Canvas and Code -->
 <section id="heatmap">
+    <div class="success-msg">
+        <p></p>
+    </div>
     <div id="map-wrapper">
         <!-- Make sure the image you want use is accessible under that src! -->
         <img id="bg-img" src="test-map.png">
@@ -206,10 +221,22 @@
 
         // block the canvas with an error message
         function showError(consoleMsg) {
-            document.querySelector('.error-msg').style = 'display:block;';
+            document.querySelector('.error-msg').classList.add('shown');
             if (consoleMsg) {
                 return console.error(consoleMsg);
             }
+        }
+
+        // tell user he has already selected enough points
+        function showSuccess(successText) {
+            document.querySelector('.success-msg').classList.add('shown');
+            if (successText) {
+                document.querySelector('.success-msg p').innerText = successText;
+            }
+        }
+
+        function hideSuccess() {
+            document.querySelector('.success-msg').classList.remove('shown');
         }
 
         // set up the heat map
@@ -230,15 +257,15 @@
                 StorageCtrl.save('points', PointCtrl.getPoints());
                 clicks++;
             } else {
-                window.alert(`Du hast bereits ${maxPoints} Orte markiert!`);
+                showSuccess(`Du hast bereits ${maxPoints} Orte markiert!`);
             }
-
         })
 
         document.getElementById('del-all')
             .addEventListener('click', function () {
                 PointCtrl.removeAllPoints();
                 Heatmap.renderPoints(PointCtrl.getPoints());
+                hideSuccess();
                 clicks = 0;
             });
 
@@ -246,6 +273,7 @@
             .addEventListener('click', function () {
                 PointCtrl.removeLastPoint();
                 Heatmap.renderPoints(PointCtrl.getPoints());
+                hideSuccess();
                 clicks--;
             });
 
@@ -253,6 +281,7 @@
             PointCtrl.removeAllPoints();
             Heatmap.renderPoints(PointCtrl.getPoints());
             Heatmap.setSize(img.clientWidth, img.clientHeight);
+            hideSuccess();
             clicks = 0;
         })
     </script>
