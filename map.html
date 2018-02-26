@@ -69,7 +69,6 @@
             let canvas;
             let ctx;
             let img;
-            let points = [];
             let size = {
                 width: 0,
                 height: 0
@@ -84,6 +83,10 @@
 
             return {
                 initialize: function (_canvas, _img, errCallback) {
+                    if (!window.CanvasRenderingContext2D) {
+                        return errCallback('[ Heatmap Module ] No canvas rendering context.');
+                    }
+
                     if (!_img) {
                         return errCallback('[ Heatmap Module ] No valid image supplied. Make sure it is included in the page, correctly named and selected and has the correct src attribute.');
                     }
@@ -97,13 +100,9 @@
                     }
 
                     canvas = _canvas;
+                    ctx = canvas.getContext('2d');
                     img = _img;
                     setSize(img.clientWidth, img.clientHeight);
-
-                    if (!window.CanvasRenderingContext2D) {
-                        return errCallback('[ Heatmap Module ] No canvas rendering context.');
-                    }
-                    ctx = canvas.getContext('2d');
                 },
 
                 setSize: setSize,
@@ -112,26 +111,10 @@
                     return size;
                 },
 
-                addPoint: function (_x, _y) {
-                    points.push({ x: _x, y: _y });
-                },
-
-                removeLastPoint: function () {
-                    points.pop();
-                },
-
-                removeAllPoints: function () {
-                    points = [];
-                },
-
-                getPoints: function () {
-                    return points;
-                },
-
-                renderPoints: function () {
+                renderPoints: function (pointArray) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    for (let i = 0; i < points.length; i++) {
-                        const point = points[i];
+                    for (let i = 0; i < pointArray.length; i++) {
+                        const point = pointArray[i];
 
                         let size = Math.floor(canvas.width / 20) - i * Math.floor(canvas.width / 125);
                         if (size <= 20) size = 20;
@@ -152,6 +135,70 @@
             }
         })();
 
+        // custom state controller for managing points
+        const PointCtrl = (function () {
+            let points = [];
+
+            return {
+                addPoint: function (_x, _y) {
+                    points.push({ x: _x, y: _y });
+                },
+
+                removeLastPoint: function () {
+                    points.pop();
+                },
+
+                removeAllPoints: function () {
+                    points = [];
+                },
+
+                getPoints: function () {
+                    return points;
+                },
+            }
+        })();
+
+        // custom storage controller to interface with hidden inputs from soscisurvey
+        const StorageCtrl = (function () {
+            let name;
+
+            const pad2 = function (x) {
+                return ('00' + x).slice(-2);
+            }
+
+            return {
+                initialize: function (varName, errCallback) {
+                    if (!document.getElementById(`${varName}_01`)) {
+                        return errCallback('[ Storage Controller ] Can\'t access internal variables for storing click positions. Make sure they exist and they are referenced by their correct name in the initialization of the storage controller.');
+                    }
+                },
+
+                save: function (key, data) {
+                    switch (key) {
+                        case 'size':
+                            document.getElementById(`${name}_01`).value = data.width;
+                            document.getElementById(`${name}_02`).value = data.height;
+                            break;
+
+                        case 'points':
+                            for (let i = 0; i < data.length; i++) {
+                                const point = data[i];
+                                let indexX = `${name}_${pad2((i * 2) + 3)}`;
+                                let indexY = `${name}_${pad2((i * 2) + 4)}`;
+                                document.getElementById(indexX).value = data.width;
+                                document.getElementById(indexY).value = data.height;
+                            }
+                            break;
+
+                        default:
+                            errCallback('[ Storage Controller ] Invalid keys! Valid keys "size" or "points"');
+                            break;
+                    }
+                }
+            }
+        })();
+
+        // block the canvas with an error message
         function showError(consoleMsg) {
             document.querySelector('.error-msg').style = 'display:block;';
             if (consoleMsg) {
@@ -159,26 +206,39 @@
             }
         }
 
-        const img = document.getElementById('bg-img');
+        // set up the heat map
         const canvas = document.getElementById('map');
+        const img = document.getElementById('bg-img');
 
         Heatmap.initialize(canvas, img, showError);
 
+        // set up the storage control
+        StorageCtrl.initialize('U501', showError);
+        StorageCtrl.save('size', Heatmap.getSize());
+
+        // page functionality
         canvas.addEventListener('click', function (e) {
-            Heatmap.addPoint(e.offsetX, e.offsetY);
-            Heatmap.renderPoints();
+            PointCtrl.addPoint(e.offsetX, e.offsetY);
+            Heatmap.renderPoints(PointCtrl.getPoints());
+            StorageCtrl.save('points', PointCtrl.getPoints())
         })
 
         document.getElementById('del-all')
             .addEventListener('click', function () {
-                Heatmap.removeAllPoints();
-                Heatmap.renderPoints();
+                PointCtrl.removeAllPoints();
+                Heatmap.renderPoints(PointCtrl.getPoints());
             });
 
         document.getElementById('del-last')
             .addEventListener('click', function () {
-                Heatmap.removeLastPoint();
-                Heatmap.renderPoints();
+                PointCtrl.removeLastPoint();
+                Heatmap.renderPoints(PointCtrl.getPoints());
             });
+
+        window.addEventListener('resize', function () {
+            PointCtrl.removeAllPoints();
+            Heatmap.renderPoints(PointCtrl.getPoints());
+            Heatmap.setSize();
+        })
     </script>
 </section>
