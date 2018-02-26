@@ -3,8 +3,8 @@
     canvas#map {
         border: 2px solid black;
         position: absolute;
-        top: -2;
-        left: -2;
+        top: -2px;
+        left: -2px;
     }
 
     #map-wrapper {
@@ -171,6 +171,7 @@
                     if (!document.getElementById(`${varName}_01`)) {
                         return errCallback('[ Storage Controller ] Can\'t access internal variables for storing click positions. Make sure they exist and they are referenced by their correct name in the initialization of the storage controller.');
                     }
+                    name = varName;
                 },
 
                 save: function (key, data) {
