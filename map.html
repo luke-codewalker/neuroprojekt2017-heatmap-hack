@@ -36,8 +36,8 @@
     </p>
     <p> Zum Abschluss klicke einfach auf "Weiter" unten auf der Seite.
     </p>
-    <input type="button" id="del_all" value="Alle Einträge löschen">
-    <input type="button" id="del_last" value="Letzten Eintrag löschen">
+    <input type="button" id="del-all" value="Alle Einträge löschen">
+    <input type="button" id="del-last" value="Letzten Eintrag löschen">
     </p>
 </section>
 
@@ -107,6 +107,10 @@
                     points = [];
                 },
 
+                getPoints: function () {
+                    return points;
+                },
+
                 renderPoints: function () {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     for (let i = 0; i < points.length; i++) {
@@ -130,5 +134,27 @@
                 },
             }
         })()
+
+        const img = document.getElementById('bg-img');
+        const canvas = document.getElementById('map');
+
+        Heatmap.initialize(canvas, img);
+
+        canvas.addEventListener('click', function (e) {
+            Heatmap.addPoint(e.offsetX, e.offsetY);
+            Heatmap.renderPoints();
+        })
+
+        document.getElementById('del-all')
+            .addEventListener('click', function () {
+                Heatmap.removeAllPoints();
+                Heatmap.renderPoints();
+            });
+
+        document.getElementById('del-last')
+            .addEventListener('click', function () {
+                Heatmap.removeLastPoint();
+                Heatmap.renderPoints();
+            });
     </script>
 </section>
