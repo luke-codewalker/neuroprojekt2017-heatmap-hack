@@ -1,0 +1,190 @@
+<!-- Styles for positioning canvas over map -->
+<style type="text/css">
+    canvas {
+        border: 2px solid black;
+    }
+
+    #bg-img {
+        width: 100%;
+        height: auto;
+    }
+
+    #map {
+        position: absolute;
+    }
+</style>
+
+<!-- Instructions -->
+<section id="instructions">
+    <h2> Top 5 Stationen</h2>
+    <p> Bitte markiere auf diesem Netzplan die 5 Stationen, die du am häufigsten nutzt. Beginne dabei mit der von dir am häufigsten
+        genutzten Station und markieren dann die weiteren Stationen in absteigender Reihenfolge.
+    </p>
+    <p> Um eine Station zu markieren, musst du nur mit der linken Maustaste auf die Karte klicken. Zum Löschen einzelner oder
+        aller Markierungen verwende bitte die Buttons.
+    </p>
+    <p> Zum Abschluss klicke einfach auf "Weiter" unten auf der Seite
+    </p>
+    <input type="button" id="del_all" value="Alle Einträge löschen">
+    <input type="button" id="del_last" value="Letzten Eintrag löschen">
+    </p>
+</section>
+
+<!-- Heatmap Canvas and Code -->
+<section id="heatmap">
+    <canvas id="map" width="600" height="100">
+        Diese Frage funktioniert leider aus technischen Gründen in Ihrem Browser nicht, da JavaScript nicht aktiviert ist, bzw. ihr
+        Browser das HTML5 "canvas"-Element nicht unterstützt. Bitte klicken Sie auf "Weiter". Sie werden vor dem Versuch
+        noch eine weitere Gelegenheit haben, die Frage auszufüllen.
+    </canvas>
+
+    <!-- Make sure the image you want use is accessible under that src! -->
+    <img id="bg-img" src="Berlin-Transport-Map-BVG.jpg">
+
+    <script type="text/javascript">
+        var canvas;
+        var ctx;
+        window.onload = function () {
+            // get a reference to the map image
+            var img = document.getElementById("bg-img");
+
+            // get a reference to the canvas and the drawing context
+            canvas = document.getElementById("map");
+
+            // if the rendering context is not available grey out the image
+            if (!window.CanvasRenderingContext2D) {
+                img.style.opacity = 0.2;
+                // else continue with the interactive selection
+            } else {
+                ctx = canvas.getContext("2d");
+
+                // get the images original size and calculate it's scaling
+                var img_w = document.getElementById("bg-img").naturalWidth;
+                var img_h = document.getElementById("bg-img").naturalHeight;
+                var scale = img_h / img_w;
+                // get the rendered size
+                var render_w = document.getElementById("bg-img").clientWidth;
+                var render_h = document.getElementById("bg-img").clientHeight;
+
+                // set the canvas to the size of the rendered image (with accurate scaling)
+                canvas.width = render_w;
+                canvas.height = render_w * scale;
+
+                // create new object to store clicks in
+                var dots = new Object();
+                // save the canvas dimensions in the shapes object
+                dots.bottomright = [canvas.width, canvas.height];
+                // store the height and width in the internal variable
+                document.getElementById("U503_01").value = dots.bottomright[0];
+                document.getElementById("U503_02").value = dots.bottomright[1];
+
+                // initialize an counter to keep track of clicks and a max number of clicks
+                var max = 5;
+                var counter = 0;
+
+                // add an event listener to the canvas for clicks
+                canvas.addEventListener("click", store, false);
+                document.getElementById("del_all").addEventListener("click", remove_all, false);
+                document.getElementById("del_last").addEventListener("click", remove_last, false);
+
+                // function to store a dot's position when clicked and write it to the internal vairable
+                function store(p) {
+                    // if there are less than the ma number of dots marked draw and store a new one else alert the user
+                    if (counter < max) {
+                        counter++;
+                        dots["click" + counter] = {};
+                        dots["click" + counter].x = p.offsetX;
+                        dots["click" + counter].y = p.offsetY;
+
+                        // draw an ellipse or a rectangle if the ellipse shape is not available
+                        if ("ellipse" in ctx) {
+                            ctx.beginPath();
+                            ctx.ellipse(p.offsetX, p.offsetY, 8 / (counter / (counter + 3)), 8 / (counter / (counter + 3)), 0, 0, 2 * Math.PI);
+                            ctx.fillStyle = "rgba(255,200,0,0.75)";
+                            ctx.fill();
+                            ctx.strokeStyle = "rgb(255,0,0)";
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                        } else {
+                            dots["click" + counter].x = dots["click" + counter].x - ((10 / (counter / (counter + 3))) / 2);
+                            dots["click" + counter].y = dots["click" + counter].y - ((10 / (counter / (counter + 3))) / 2);
+                            ctx.beginPath();
+                            ctx.fillStyle = "rgba(255,200,0,0.75)";
+                            ctx.rect(p.offsetX - ((10 / (counter / (counter + 3))) / 2), p.offsetY - ((10 / (counter / (counter + 3))) / 2), (10 / (counter / (counter + 3))), (10 / (counter / (counter + 3))));
+                            ctx.strokeStyle = "rgb(255,0,0)";
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                            ctx.fill();
+                        }
+
+                        // calculate two digit numbers with "0" padding if <10 to fit the format of SoSciSurvey
+                        function ind(n) {
+                            if (n < 10) {
+                                return "0" + n
+                            }
+                            else {
+                                return n
+                            }
+                        }
+
+                        // calculate the padded numbers for storing the coordinates in the internal SoSciSurvey variable
+                        var n1 = ind((counter * 2) + 1);
+                        var n2 = ind((counter * 2) + 2);
+
+                        // store the coordinates in the internal variable
+                        document.getElementById("U503_" + n1).value = dots["click" + counter].x;
+                        document.getElementById("U503_" + n2).value = dots["click" + counter].y;
+                    } else {
+                        window.alert("Sie haben bereits " + max + " Orte markiert!");
+                    };
+                }
+
+                // function to remove all marked dots
+                function remove_all() {
+                    // clear the canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    // loop through dots and delete them all
+                    for (i = counter; i > 0; i--) {
+                        delete dots["click" + i];
+                    }
+                    // reset counter
+                    counter = 0;
+                }
+
+                // function to remove the last marked dot
+                function remove_last() {
+                    // if there is at least one dot
+                    if (counter > 0) {
+                        // delete the property from the dots object and make the counter smaller
+                        delete dots["click" + counter];
+                        counter--;
+                    }
+
+                    // clear the canvas
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // iterate thorugh the dots and draw an ellipse (or a rectangle if ellipse does not exist)
+                    for (i = 1; i <= counter; i++) {
+                        if ("ellipse" in ctx) {
+                            ctx.beginPath();
+                            ctx.ellipse(dots["click" + i].x, dots["click" + i].y, 8 / (i / (i + 3)), 8 / (i / (i + 3)), 0, 0, 2 * Math.PI);
+                            ctx.fillStyle = "rgba(255,200,0,0.75)";
+                            ctx.fill();
+                            ctx.strokeStyle = "rgb(255,0,0)";
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                        } else {
+                            ctx.beginPath();
+                            ctx.fillStyle = "rgba(255,200,0,0.75)";
+                            ctx.rect(dots["click" + i].x, dots["click" + i].y, 10 / (i / (i + 3)), 10 / (i / (i + 3)));
+                            ctx.strokeStyle = "rgb(255,0,0)";
+                            ctx.lineWidth = 3;
+                            ctx.stroke();
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</section>
