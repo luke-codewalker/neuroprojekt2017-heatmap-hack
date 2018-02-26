@@ -5,6 +5,7 @@
         position: absolute;
         top: -2px;
         left: -2px;
+        cursor: pointer;
     }
 
     #map-wrapper {
@@ -186,8 +187,8 @@
                                 const point = data[i];
                                 let indexX = `${name}_${pad2((i * 2) + 3)}`;
                                 let indexY = `${name}_${pad2((i * 2) + 4)}`;
-                                document.getElementById(indexX).value = data.width;
-                                document.getElementById(indexY).value = data.height;
+                                document.getElementById(indexX).value = point.x;
+                                document.getElementById(indexY).value = point.y;
                             }
                             break;
 
@@ -198,6 +199,10 @@
                 }
             }
         })();
+
+        // Max number of points allowed
+        const maxPoints = 5;
+        let clicks = 0;
 
         // block the canvas with an error message
         function showError(consoleMsg) {
@@ -219,27 +224,36 @@
 
         // page functionality
         canvas.addEventListener('click', function (e) {
-            PointCtrl.addPoint(e.offsetX, e.offsetY);
-            Heatmap.renderPoints(PointCtrl.getPoints());
-            StorageCtrl.save('points', PointCtrl.getPoints())
+            if (clicks < maxPoints) {
+                PointCtrl.addPoint(e.offsetX, e.offsetY);
+                Heatmap.renderPoints(PointCtrl.getPoints());
+                StorageCtrl.save('points', PointCtrl.getPoints());
+                clicks++;
+            } else {
+                window.alert(`Du hast bereits ${maxPoints} Orte markiert!`);
+            }
+
         })
 
         document.getElementById('del-all')
             .addEventListener('click', function () {
                 PointCtrl.removeAllPoints();
                 Heatmap.renderPoints(PointCtrl.getPoints());
+                clicks = 0;
             });
 
         document.getElementById('del-last')
             .addEventListener('click', function () {
                 PointCtrl.removeLastPoint();
                 Heatmap.renderPoints(PointCtrl.getPoints());
+                clicks--;
             });
 
         window.addEventListener('resize', function () {
             PointCtrl.removeAllPoints();
             Heatmap.renderPoints(PointCtrl.getPoints());
-            Heatmap.setSize();
+            Heatmap.setSize(img.clientWidth, img.clientHeight);
+            clicks = 0;
         })
     </script>
 </section>
