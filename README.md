@@ -1,0 +1,1 @@
+# SoSciSurvey Heatmap Hack
