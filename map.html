@@ -32,14 +32,16 @@
 
 <!-- Heatmap Canvas and Code -->
 <section id="heatmap">
-    <canvas id="map" width="600" height="100">
-        Diese Frage funktioniert leider aus technischen Gründen in Ihrem Browser nicht, da JavaScript nicht aktiviert ist, bzw. ihr
-        Browser das HTML5 "canvas"-Element nicht unterstützt. Bitte klicken Sie auf "Weiter". Sie werden vor dem Versuch
-        noch eine weitere Gelegenheit haben, die Frage auszufüllen.
-    </canvas>
+    <div id="map-wrapper">
+        <canvas id="map" width="600" height="100">
+            Diese Frage funktioniert leider aus technischen Gründen in Ihrem Browser nicht, da JavaScript nicht aktiviert ist, bzw. ihr
+            Browser das HTML5 "canvas"-Element nicht unterstützt. Bitte klicken Sie auf "Weiter". Sie werden vor dem Versuch
+            noch eine weitere Gelegenheit haben, die Frage auszufüllen.
+        </canvas>
 
-    <!-- Make sure the image you want use is accessible under that src! -->
-    <img id="bg-img" src="Berlin-Transport-Map-BVG.jpg">
+        <!-- Make sure the image you want use is accessible under that src! -->
+        <img id="bg-img" src="Berlin-Transport-Map-BVG.jpg">
+    </div>
 
     <script type="text/javascript">
         window.onload = function () {
@@ -60,14 +62,18 @@
             } else {
                 const ctx = canvas.getContext('2d');
 
+                function createCanvasResizer(scale) {
+                    return function () {
+                        // set the canvas to the size of the rendered image (with accurate scaling)
+                        canvas.width = img.clientWidth;
+                        canvas.height = img.clientWidth * scale;
+                    }
+                }
                 // get the images original size and calculate it's scaling
                 const scale = img.naturalHeight / img.naturalWidth;;
-                // get the rendered size
-                const render_w = img.clientWidth;
-                const render_h = img.clientHeight;
-                // set the canvas to the size of the rendered image (with accurate scaling)
-                canvas.width = render_w;
-                canvas.height = render_w * scale;
+                const resizeCanvas = createCanvasResizer(scale);
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
 
                 // create new object to store clicks in
                 const dots = new Object();
