@@ -87,8 +87,8 @@
 
                 // add an event listener to the canvas for clicks
                 canvas.addEventListener('click', store, false);
-                document.getElementById('del_all').addEventListener('click', remove_all, false);
-                document.getElementById('del_last').addEventListener('click', remove_last, false);
+                document.getElementById('del_all').addEventListener('click', removeAllPoints, false);
+                document.getElementById('del_last').addEventListener('click', removeLastPoint, false);
 
                 // function to store a dot's position when clicked and write it to the internal vairable
                 function store(p) {
@@ -143,7 +143,7 @@
                 }
 
                 // function to remove all marked dots
-                function remove_all() {
+                function removeAllPoints() {
                     // clear the canvas
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     // loop through dots and delete them all
@@ -155,7 +155,7 @@
                 }
 
                 // function to remove the last marked dot
-                function remove_last() {
+                function removeLastPoint() {
                     // if there is at least one dot
                     if (counter > 0) {
                         // delete the property from the dots object and make the counter smaller
