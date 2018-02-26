@@ -23,7 +23,7 @@
     <p> Um eine Station zu markieren, musst du nur mit der linken Maustaste auf die Karte klicken. Zum Löschen einzelner oder
         aller Markierungen verwende bitte die Buttons.
     </p>
-    <p> Zum Abschluss klicke einfach auf "Weiter" unten auf der Seite
+    <p> Zum Abschluss klicke einfach auf "Weiter" unten auf der Seite.
     </p>
     <input type="button" id="del_all" value="Alle Einträge löschen">
     <input type="button" id="del_last" value="Letzten Eintrag löschen">
@@ -34,8 +34,8 @@
 <section id="heatmap">
     <div id="map-wrapper">
         <canvas id="map" width="600" height="100">
-            Diese Frage funktioniert leider aus technischen Gründen in Ihrem Browser nicht, da JavaScript nicht aktiviert ist, bzw. ihr
-            Browser das HTML5 "canvas"-Element nicht unterstützt. Bitte klicken Sie auf "Weiter". Sie werden vor dem Versuch
+            Diese Frage funktioniert leider aus technischen Gründen in deinem Browser nicht, da JavaScript nicht aktiviert ist, bzw.
+            dein Browser das HTML5 "canvas"-Element nicht unterstützt. Bitte klicke auf "Weiter". Du wirst vor dem Versuch
             noch eine weitere Gelegenheit haben, die Frage auszufüllen.
         </canvas>
 
@@ -53,24 +53,20 @@
 
             // get a reference to the canvas and the drawing context
             const canvas = document.getElementById('map');
-
-            // if the rendering context is not available grey out the image
+            // if the rendering context is not available grey out the image and return
             if (!window.CanvasRenderingContext2D) {
                 img.style.opacity = 0.2;
                 return console.error('[ Heatmap Error ] No canvas rendering context.');
-                // else continue with the interactive selection
             }
             const ctx = canvas.getContext('2d');
 
+            // canvas needs to be the same size as the image to display correct values when clicking
             function createCanvasResizer(canvas) {
                 return function (width, height) {
-                    // set the canvas to the size of the rendered image (with accurate scaling)
                     canvas.width = width;
                     canvas.height = height;
                 }
             }
-            // get the images original size and calculate it's scaling
-            const scale = img.naturalHeight / img.naturalWidth;;
             const resizeCanvas = createCanvasResizer(canvas);
             resizeCanvas(img.clientWidth, img.clientHeight);
 
