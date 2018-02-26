@@ -58,5 +58,77 @@
     </div>
 
     <script type="text/javascript">
+        // Custom heatmap module
+        const Heatmap = (function () {
+            let canvas;
+            let ctx;
+            let img;
+            let points = [];
+            let size = {
+                width: 0,
+                height: 0
+            }
+
+            const setSize = function (width, height) {
+                size.width = width;
+                size.height = height;
+                canvas.width = size.width;
+                canvas.height = size.height;
+            }
+
+            return {
+                initialize: function (_canvas, _img) {
+                    canvas = _canvas;
+                    img = _img;
+                    setSize(img.clientWidth, img.clientHeight);
+
+                    if (!window.CanvasRenderingContext2D) {
+                        img.style.opacity = 0.2;
+                        return console.error('[ Heatmap Error ] No canvas rendering context.');
+                    }
+                    ctx = canvas.getContext('2d');
+                },
+
+                setSize: setSize,
+
+                getSize: function () {
+                    return size;
+                },
+
+                addPoint: function (_x, _y) {
+                    points.push({ x: _x, y: _y });
+                },
+
+                removeLastPoint: function () {
+                    points.pop();
+                },
+
+                removeAllPoints: function () {
+                    points = [];
+                },
+
+                renderPoints: function () {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < points.length; i++) {
+                        const point = points[i];
+
+                        let size = Math.floor(canvas.width / 20) - i * Math.floor(canvas.width / 100);
+                        if (size <= 10) size = 10;
+
+                        ctx.beginPath();
+                        ctx.fillStyle = 'rgba(255,200,0,0.75)';
+                        ctx.strokeStyle = 'rgb(255,0,0)';
+                        ctx.lineWidth = 3;
+                        if ('ellipse' in ctx) {
+                            ctx.ellipse(point.x, point.y, size, size, 0, 0, 2 * Math.PI);
+                        } else {
+                            ctx.rect(point.x, point.y, size, size);
+                        }
+                        ctx.stroke();
+                        ctx.fill();
+                    }
+                },
+            }
+        })()
     </script>
 </section>
