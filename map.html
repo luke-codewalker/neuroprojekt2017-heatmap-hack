@@ -45,6 +45,9 @@
         window.onload = function () {
             // get a reference to the map image
             const img = document.getElementById('bg-img');
+            if (!img) {
+                return console.error('[ Heatmap Error ] Background could not be found. Make sure it is included in the page and has the correct src attribute.');
+            }
 
             // get a reference to the canvas and the drawing context
             const canvas = document.getElementById('map');
@@ -52,18 +55,16 @@
             // if the rendering context is not available grey out the image
             if (!window.CanvasRenderingContext2D) {
                 img.style.opacity = 0.2;
+                return console.error('[ Heatmap Error ] No canvas rendering context.');
                 // else continue with the interactive selection
             } else {
                 const ctx = canvas.getContext('2d');
 
                 // get the images original size and calculate it's scaling
-                const img_w = document.getElementById('bg-img').naturalWidth;
-                const img_h = document.getElementById('bg-img').naturalHeight;
-                const scale = img_h / img_w;
+                const scale = img.naturalHeight / img.naturalWidth;;
                 // get the rendered size
-                const render_w = document.getElementById('bg-img').clientWidth;
-                const render_h = document.getElementById('bg-img').clientHeight;
-
+                const render_w = img.clientWidth;
+                const render_h = img.clientHeight;
                 // set the canvas to the size of the rendered image (with accurate scaling)
                 canvas.width = render_w;
                 canvas.height = render_w * scale;
@@ -73,6 +74,10 @@
                 // save the canvas dimensions in the shapes object
                 dots.bottomright = [canvas.width, canvas.height];
                 // store the height and width in the internal variable
+                // check if they are available first
+                if (!document.getElementById('U503_01')) {
+                    return console.error('[ Heatmap Error ] Can\'t access internal variables for storing click positions. Make sure they exist and they are referenced by their correct name.');
+                }
                 document.getElementById('U503_01').value = dots.bottomright[0];
                 document.getElementById('U503_02').value = dots.bottomright[1];
 
