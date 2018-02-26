@@ -74,7 +74,7 @@
             noch eine weitere Gelegenheit haben, die Frage auszufüllen.
         </canvas>
         <div class="error-msg">
-            <p>Leider funktioniert die Heatmap nicht. Du kannst auf "Weiter" klicken um fortzufahren.</p>
+            <p>Leider funktioniert die Heatmap nicht. Du kannst auf "Weiter" klicken um fortzufahren.</p>git
         </div>
     </div>
 
@@ -183,7 +183,7 @@
 
             return {
                 initialize: function (varName, errCallback) {
-                    if (!document.getElementById(`${varName}_01`)) {
+                    if (!document.getElementById(varName + '_01')) {
                         return errCallback('[ Storage Controller ] Can\'t access internal variables for storing click positions. Make sure they exist and they are referenced by their correct name in the initialization of the storage controller.');
                     }
                     name = varName;
@@ -192,15 +192,15 @@
                 save: function (key, data) {
                     switch (key) {
                         case 'size':
-                            document.getElementById(`${name}_01`).value = data.width;
-                            document.getElementById(`${name}_02`).value = data.height;
+                            document.getElementById(name + '_01').value = data.width;
+                            document.getElementById(name + '_02').value = data.height;
                             break;
 
                         case 'points':
                             for (let i = 0; i < data.length; i++) {
                                 const point = data[i];
-                                let indexX = `${name}_${pad2((i * 2) + 3)}`;
-                                let indexY = `${name}_${pad2((i * 2) + 4)}`;
+                                let indexX = name + '_' + pad2((i * 2) + 3);
+                                let indexY = name + '_' + pad2((i * 2) + 4);
                                 document.getElementById(indexX).value = point.x;
                                 document.getElementById(indexY).value = point.y;
                             }
