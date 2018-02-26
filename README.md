@@ -81,12 +81,12 @@ Set the source of the image you want to use. In this example it's *test-map.png*
     <img id="bg-img" src="test-map.png">
 ```
 
-Set the number of points that shuld be allowed. In this example it's *5*.
+Set the number of points that should be allowed. In this example it's *5*.
 ```javascript
     const maxPoints = 5;
 ```
 
-Set the name of the *Interne Variable* for saving the data.In this example it's *U501*.
+Set the name of the *Interne Variable* for saving the data. In this example it's *U501*.
 ```javascript
     StorageCtrl.initialize('U501', showError);
 ```
