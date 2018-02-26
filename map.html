@@ -62,18 +62,17 @@
             } else {
                 const ctx = canvas.getContext('2d');
 
-                function createCanvasResizer(scale) {
-                    return function () {
+                function createCanvasResizer(canvas) {
+                    return function (width, height) {
                         // set the canvas to the size of the rendered image (with accurate scaling)
-                        canvas.width = img.clientWidth;
-                        canvas.height = img.clientWidth * scale;
+                        canvas.width = width;
+                        canvas.height = height;
                     }
                 }
                 // get the images original size and calculate it's scaling
                 const scale = img.naturalHeight / img.naturalWidth;;
-                const resizeCanvas = createCanvasResizer(scale);
-                resizeCanvas();
-                window.addEventListener('resize', resizeCanvas);
+                const resizeCanvas = createCanvasResizer(canvas);
+                resizeCanvas(img.clientWidth, img.clientHeight);
 
                 // create new object to store clicks in
                 const dots = new Object();
