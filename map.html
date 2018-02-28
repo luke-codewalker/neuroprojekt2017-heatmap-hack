@@ -241,8 +241,9 @@
         // set up the heat map
         const canvas = document.getElementById('map');
         const img = document.getElementById('bg-img');
-
-        Heatmap.initialize(canvas, img, showError);
+        img.addEventListener('load', function() {
+            Heatmap.initialize(canvas, img, showError);
+        });
 
         // set up the storage control
         StorageCtrl.initialize('U501', showError);
