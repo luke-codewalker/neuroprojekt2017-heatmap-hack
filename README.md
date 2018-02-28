@@ -57,12 +57,12 @@ This code was created during the project Projekt Neuroergonomie 2017 at the Tech
 
 ## Setup in your survey
 
-The 'heatmap' need three components to work:
+The 'heatmap' needs three components to work:
  - A *Interne Variable*  question on SoSciSurvey
  - The picture you want to click on, uploaded to SoSciSurvey
  - The code in `map.html` embedded in a `HTML-Code` component on your site
 
- ### Steps toyour own 'heatmap'
+ ### Steps to your own 'heatmap'
  1. Make a survey on https://www.soscisurvey.de/
  2. Upload your picture
  3. Make a *Interne Variable* question and add it to your questionnaire
