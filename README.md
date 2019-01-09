@@ -6,7 +6,7 @@
 
 Der Code ermöglicht es auf https://www.soscisurvey.de, einem Tool für Onlineumfragen, eine Frage zu erstellen, in der auf einem Bild per Mausklick Punkte markiert werden können. Die Position der Punkte wird sowohl auf dem Bild dargestellt als auch in den Fragebogendaten gespeichert.
 
-Dieser Code entstand im Rahmen der Veranstaltung Projekt Neuroergonomie im Sommersemester 2017 an der TU Berlin. Er ermöglichte es unserer Projektgruppe Probanden in einem Online Fragebogen die fünf von ihnen am häufigsten genutzten U-Bahn Stationen zu markieren. Eine Demoversion findet sich [hier](https://www.soscisurvey.de/map-test/).
+Dieser Code entstand im Rahmen der Veranstaltung Projekt Neuroergonomie im Sommersemester 2017 an der TU Berlin. Er ermöglichte es unserer Projektgruppe Probanden in einem Online Fragebogen die fünf von ihnen am häufigsten genutzten U-Bahn Stationen zu markieren. 
 
 ## Setup in einem Fragebogen
 
@@ -53,7 +53,7 @@ Lege den Namen der *Interne Variable* fest, um die Daten zu speichern. Hier ist 
 
 This code makes it possible to add a 'heatmap' to a question on https://www.soscisurvey.de, a survey tool. It will enable the user to click on a picture to mark certain points. The points will be shown on the picture and their position stored in the survey's database.
 
-This code was created during the project Projekt Neuroergonomie 2017 at the Technical University Berlin. A demo version can be found [here](https://www.soscisurvey.de/map-test/).
+This code was created during the project Projekt Neuroergonomie 2017 at the Technical University Berlin.
 
 ## Setup in your survey
 
